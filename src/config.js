@@ -7,7 +7,7 @@ module.exports = {
     INTERVALS: [[8 * 60, 15 * 60], [16 * 60, 20 * 60]]
   },
   SERVER: {
-    PORT: 2026,
+    PORT: 8080,
   },
   FIREBASE_CONFIG: {
     apiKey: "AIzaSyBvMNmHd_el76NCA4IRfIlGJXGoMNCFS5E",
