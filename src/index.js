@@ -1,10 +1,17 @@
 const express = require('express')
 const crypto = require('crypto')
 const config = require('./config')
+
 const addHead = (_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', '*');
+  next()
+}
+
+const logger = (req, _, next) => {
+  console.log('url', req.url)
+  console.log('method', req.method)
   next()
 }
 
@@ -30,6 +37,7 @@ const routers = {
 }
 
 app.use(addHead)
+app.use(logger)
 app.use(express.json())
 app.use(express.static(path.join(__dirname, '../bundle')))
 
