@@ -40,7 +40,7 @@ async function addOrder({ month, year, day, time, serviceIds, userId }) {
     date: new Date(Date.UTC(year, month, day)),
     time,
     serviceIds,
-    userId,
+    userId: String(userId),
   })
 }
 
