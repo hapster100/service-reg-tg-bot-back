@@ -3,7 +3,7 @@ const { initializeApp } = require('@firebase/app')
 const { 
   getFirestore, collection, addDoc,
   getDocs, getDoc, doc, query, where,
-  updateDoc, deleteDoc, setDoc,
+  updateDoc, deleteDoc, setDoc, documentId,
 } = require('@firebase/firestore');
 
 const config = FIREBASE_CONFIG
@@ -41,6 +41,10 @@ const getById = (collectionName, id) => getDoc(
   doc(firestore, collectionName, id)
 ).then(res => res.data())
 
+const getByIds = (collectionName, ids) => ids.length > 0 ? getDocs(query(
+  getCollection(collectionName), where(documentId(), 'in', ids)
+)).then(res => res.docs.map(addId)) : Promise.resolve([])
+
 const getFromCollectionBetween = (collectionName, field, min, max) => getDocs(query(
   getCollection(collectionName), where(field, '>=', min), where(field, '<', max)
 )).then(res => res.docs.map(addId))
@@ -67,4 +71,5 @@ module.exports = {
     existsInCollection,
     setToCollection,
     getById,
+    getByIds,
 }

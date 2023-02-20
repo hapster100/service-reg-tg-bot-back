@@ -5,8 +5,12 @@ const shedulleRouter = express.Router()
 
 shedulleRouter.post('/', async (req, res) => {
   const { month, year } = req.body
-  const shedulle = await getMonthShedulle(year, month)
-  res.send({ shedulle })
+  try {
+    const shedulle = await getMonthShedulle(year, month)
+    res.send({ shedulle })
+  } catch(e) {
+    res.send({ shedulle: {} })
+  }
 })
 
 shedulleRouter.put('/', async (req, res) => {

@@ -1,5 +1,5 @@
 module.exports = {
-  API_TOKEN: '6196547442:AAEG28z0Tiw54tCq9LNesAydeoHRhEWaHXk',
+  API_TOKEN: '2200044101:AAHNfynIKgWLzFwompd5BADfyKliXtLPKSM',
   ADMINS: ['aland97'],
   DAYS: {
     STEP: 15,
@@ -7,7 +7,8 @@ module.exports = {
     INTERVALS: [[8 * 60, 15 * 60], [16 * 60, 20 * 60]]
   },
   SERVER: {
-    PORT: 8080,
+    PORT: 2025,
+    HTTPS: false,
   },
   FIREBASE_CONFIG: {
     apiKey: "AIzaSyBvMNmHd_el76NCA4IRfIlGJXGoMNCFS5E",
