@@ -76,7 +76,54 @@ function getSlots(free, taken, duration) {
   return slots
 }
 
+function shedulleSlots(services, orders, shedulle, duration) {
+  const serviceDuration = services.reduce((acc, s) => (acc[s.id] = s.durationMinutes, acc), {})
+  const daysInMonth = new Date(Date.UTC(year, month+1, 0)).getDate()
+
+  const ordersByDay = {}
+  for(let i = 0; i < daysInMonth; i++) {
+    ordersByDay[i+1] = []
+  }
+
+  for(const order of orders) {
+    const day = order.date.getDate()
+    ordersByDay[day].push(order)
+  }
+
+  const slotsByDay = {}
+  const currDate = new Date()
+  
+  const currYear = currDate.getFullYear()
+  const currMonth = currDate.getMonth()
+  const currDay = currDate.getDate()
+
+  for(let i = 0; i < daysInMonth; i++) {
+    const day = i + 1
+
+    slotsByDay[day] = []
+    
+    if (year < currYear) continue
+    if (year === currYear && month < currMonth) continue
+    if (year === currYear && month === currMonth && day < currDay) continue
+    if (shedulle[day].free) continue
+    
+    const free = shedulle[day].intervals.map(({from, to}) => [from, to]) 
+    const taken = []
+    
+    for (const order of ordersByDay[day]) {
+      const start = order.time.hours * 60 + order.time.minutes
+      const duration = order.serviceIds.reduce((acc, id) => acc + serviceDuration[id], 0)
+      taken.push([start, start + duration])
+    }
+
+    slotsByDay[day] = getSlots(free, taken, duration)
+  }
+
+  return slotsByDay
+}
+
 module.exports = {
   subIntervals,
-  getSlots
+  getSlots,
+  shedulleSlots,
 }

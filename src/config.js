@@ -17,5 +17,6 @@ module.exports = {
     storageBucket: "warspear-offer-base.appspot.com",
     messagingSenderId: "556360637788",
     appId: "1:556360637788:web:0a8f58b03c57c50929f599"
-  }
+  },
+  DEV_MODE: true,
 }

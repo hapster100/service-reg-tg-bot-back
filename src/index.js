@@ -21,6 +21,7 @@ const validate = initData => {
 }
 
 const checkValid = (req, res, next) => {
+  if (DEV_MODE) return next()
   const initData = req.header('X-Validation-Data')
   const validateResult = validate(initData) 
 
@@ -53,7 +54,7 @@ const { servicesRouter } = require('./routes/services')
 const { categoriesRouter } = require('./routes/categories')
 const { ordersRouter } = require('./routes/orders')
 const { shedulleRouter } = require('./routes/shedulle')
-const { SERVER } = require('./config')
+const { SERVER, DEV_MODE } = require('./config')
 const { usersRouter } = require('./routes/users')
 
 const key = fs.readFileSync('.cert/key.pem').toString()
