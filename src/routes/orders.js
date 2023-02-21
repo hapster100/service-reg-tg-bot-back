@@ -54,7 +54,7 @@ ordersRouter.put('/:id', async (req, res) => {
   if (order.id === id) {
     delete order.id
     try {
-      await updateOrder(id, order)
+      await updateOrder(id, {...order, date: new Date(order.date)})
       res.send({ success: true })
     } catch (e) {
       res.send({ success: false })
