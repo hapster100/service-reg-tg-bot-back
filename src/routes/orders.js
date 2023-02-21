@@ -1,5 +1,4 @@
 const express = require('express')
-const { DAYS } = require('../config')
 const { 
   addOrder,
   deleteOrder,
@@ -7,6 +6,7 @@ const {
   getMonthOrders,
   getUserOrders,
   getOrderById,
+  updateOrder,
 } = require('../storage/orders')
 const { getServices } = require('../storage/services')
 const { getMonthShedulle } = require('../storage/shedulle')
@@ -48,6 +48,22 @@ ordersRouter.delete('/:id', async (req, res) => {
   }
 })
 
+ordersRouter.put('/:id', async (req, res) => {
+  const { id } = req.params
+  const { order } = req.body
+  if (order.id === id) {
+    delete order.id
+    try {
+      await updateOrder(id, order)
+      res.send({ success: true })
+    } catch (e) {
+      res.send({ success: false })
+    }
+  } else {
+    res.send({ success: false })
+  }
+})
+
 ordersRouter.post('/', async (req, res) => {
   const { order } = req.body
   try {
@@ -59,11 +75,13 @@ ordersRouter.post('/', async (req, res) => {
 })
 
 ordersRouter.post('/slots', async (req, res) => {
-  const { year, month, duration } = req.body
+  const { year, month, duration, orderId = '' } = req.body
   
-  const orders = await getMonthOrders(year, month)
+  const orders = (await getMonthOrders(year, month))
+    .filter(ord => ord.id !== orderId)
   const shedulle = await getMonthShedulle(year, month)
   const services = await getServices()
+
 
   res.send(JSON.stringify(shedulleSlots(
     year, month, services,
