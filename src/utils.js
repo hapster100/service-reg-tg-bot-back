@@ -76,7 +76,7 @@ function getSlots(free, taken, duration) {
   return slots
 }
 
-function shedulleSlots(services, orders, shedulle, duration) {
+function shedulleSlots(year, month, services, orders, shedulle, duration) {
   const serviceDuration = services.reduce((acc, s) => (acc[s.id] = s.durationMinutes, acc), {})
   const daysInMonth = new Date(Date.UTC(year, month+1, 0)).getDate()
 

@@ -65,7 +65,10 @@ ordersRouter.post('/slots', async (req, res) => {
   const shedulle = await getMonthShedulle(year, month)
   const services = await getServices()
 
-  res.send(JSON.stringify(shedulleSlots(services, orders, shedulle, duration)))
+  res.send(JSON.stringify(shedulleSlots(
+    year, month, services,
+    orders, shedulle, duration
+  )))
 })
 
 module.exports = {
