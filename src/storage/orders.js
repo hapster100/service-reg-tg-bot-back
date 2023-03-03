@@ -1,46 +1,59 @@
 const { 
   addToCollection,
-  getFromCollectionBetween, 
-  getFromCollectionEq, 
   updateInCollection,
   getById,
-  deleteFromCollection
-} = require('./firebase')
+  deleteFromCollection,
+  getFromCollectionWhere
+} = require('./mongoose')
 
 function transformDate(order) {
-  return {
-    ...order,
-    date: new Date(order.date.seconds * 1000)
+  if (!order instanceof Date) {
+    return {
+      ...order,
+      date: new Date(order.date.seconds * 1000)
+    }
   }
+  return order
 }
 
-async function getDayOrders(year, month, day) {
+async function getDayOrders(year, month, day, masterId) {
   const from = new Date(Date.UTC(year, month, day))
   const to = new Date(Date.UTC(year, month, day + 1))
+  const orders = await getFromCollectionWhere('orders',
+    ['date', '>=', from],
+    ['date', '<', to],
+    ['masterId', '==', masterId]
+  )
 
-  const orders = await getFromCollectionBetween('orders', 'date', from, to)
   return orders.map(transformDate)
 }
 
-async function getMonthOrders(year, month) {
+async function getMonthOrders(year, month, masterId) {
   const from = new Date(Date.UTC(year, month))
   const to = new Date(Date.UTC(year, month + 1))
-
-  const orders = await getFromCollectionBetween('orders', 'date', from, to)
+  const orders = await getFromCollectionWhere('orders',
+    ['date', '>=', from],
+    ['date', '<', to],
+    ['masterId', '==', masterId],
+  )
   return orders.map(transformDate)
 }
 
-async function getUserOrders(userId) {
-  const orders = await getFromCollectionEq('orders', 'userId', userId)
+async function getUserOrders(userId, masterId) {
+  const orders = await getFromCollectionWhere('orders',
+    ['userId', '==', userId],
+    ['masterId', '==', masterId],
+  )
   return orders.map(transformDate)
 }
 
-async function addOrder({ month, year, day, time, serviceIds, userId }) {
+async function addOrder({ month, year, day, time, serviceIds, userId, masterId }) {
   return await addToCollection('orders', {
     date: new Date(Date.UTC(year, month, day)),
     time,
     serviceIds,
     userId: String(userId),
+    masterId
   })
 }
 

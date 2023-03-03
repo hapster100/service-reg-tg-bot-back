@@ -1,35 +1,35 @@
 
 const { DAYS } = require('../config')
-const { existsInCollection, getById, setToCollection, updateInCollection } = require('./firebase')
+const { existsInCollection, getById, setToCollection, updateInCollection } = require('./mongoose')
 
-const monthId = (year, month) => [year, month].join('.')
+const monthId = (year, month, masterId) => [year, month, masterId].join('.')
 
-async function getMonthShedulle(year, month) {
-  const id = monthId(year, month)
+async function getMonthShedulle(year, month, masterId) {
+  const id = monthId(year, month, masterId)
   const exists = await existsInCollection('shedulle', id)
   if (!exists) {
-    await createMonthShedulle(year, month)
+    await createMonthShedulle(year, month, masterId)
   }
   const days = await getById('shedulle', id)
   return days
 }
 
-async function createMonthShedulle(year, month) {
-  console.log('create shedulle', year, month)
+async function createMonthShedulle(year, month, masterId) {
+  console.log('create shedulle', year, month, masterId)
   const daysInMonth = new Date(Date.UTC(year, month+1, 0)).getDate()
   const days = {}
   for(let i = 1; i <= daysInMonth; i++) {
     days[i] = {
-      free: false,
+      free: true,
       intervals: DAYS.INTERVALS.map(([from, to]) => ({from, to})),
     }
   }
 
-  return await setToCollection('shedulle', monthId(year, month), days)
+  return await setToCollection('shedulle', monthId(year, month, masterId), days)
 }
 
-async function updateMonthShedulle(year, month, update) {
-  return await updateInCollection('shedulle', monthId(year, month), update)
+async function updateMonthShedulle(year, month, masterId, update) {
+  return await updateInCollection('shedulle', monthId(year, month, masterId), update)
 }
 
 module.exports = {

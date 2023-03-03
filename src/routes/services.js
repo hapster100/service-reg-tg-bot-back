@@ -1,17 +1,20 @@
 const express = require('express')
 const { getServices, getService, addService } = require('../storage/services')
+const { getMasterId } = require('../utils')
 
 servicesRouter = express.Router()
 
-servicesRouter.get('/', async (_, res) => {
-  const services = await getServices()
+servicesRouter.get('/', async (req, res) => {
+  const masterId = getMasterId(req)
+  const services = await getServices(masterId)
   res.send(JSON.stringify({ services }))
 })
 
 servicesRouter.post('/', async (req, res) => {
   const { service } = req.body
+  const masterId = getMasterId(req)
   try {
-    await addService(service)
+    await addService({...service, masterId})
     res.send({ success: true })
   } catch (e) {
     res.send({ success: false })

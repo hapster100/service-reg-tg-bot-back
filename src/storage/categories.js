@@ -1,10 +1,10 @@
 const {
-  getAllFromCollectoion,
   addToCollection,
-} = require('./firebase')
+  getFromCollectionWhere,
+} = require('./mongoose')
 
-async function getCategories() {
-  return await getAllFromCollectoion('categories')
+async function getCategories(masterId) {
+  return await getFromCollectionWhere('categories', ['masterId', '==', masterId])
 }
 
 async function addCategory(category) {

@@ -41,17 +41,23 @@ const getById = (collectionName, id) => getDoc(
   doc(firestore, collectionName, id)
 ).then(res => res.data())
 
-const getByIds = (collectionName, ids) => ids.length > 0 ? getDocs(query(
-  getCollection(collectionName), where(documentId(), 'in', ids)
-)).then(res => res.docs.map(addId)) : Promise.resolve([])
 
-const getFromCollectionBetween = (collectionName, field, min, max) => getDocs(query(
-  getCollection(collectionName), where(field, '>=', min), where(field, '<', max)
+const getFromCollectionWhere = (collectionName, ...wheres) => getDocs(query(
+  getCollection(collectionName), ...wheres.map(([f, c, v]) => where(f, c, v))
 )).then(res => res.docs.map(addId))
 
-const getFromCollectionEq = (collectionName, field, value) => getDocs(query(
-  getCollection(collectionName), where(field, '==', value)
-)).then(res => res.docs.map(addId))
+
+const getByIds = (collectionName, ids) => ids.length > 0 ? getFromCollectionWhere(
+  collectionName, [documentId(), 'in', ids]
+) : Promise.resolve([])
+
+const getFromCollectionBetween = (collectionName, field, min, max) =>
+  getFromCollectionWhere(collectionName, [field, '>=', min], [field, '<', max])
+
+
+const getFromCollectionEq = (collectionName, field, value) => getFromCollectionWhere(
+  collectionName, [field, '==', value]
+)
 
 const existsInCollection = (collectionName, id) => getDoc(
   doc(firestore, collectionName, id)
@@ -72,4 +78,5 @@ module.exports = {
     setToCollection,
     getById,
     getByIds,
+    getFromCollectionWhere,
 }

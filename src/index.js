@@ -1,9 +1,22 @@
 const express = require('express')
 const crypto = require('crypto')
 const config = require('./config')
+const { getMasterId, getInitData } = require('./utils')
+const https = require('https')
+const path = require('path')
+const fs = require('fs')
+const { servicesRouter } = require('./routes/services')
+const { categoriesRouter } = require('./routes/categories')
+const { ordersRouter } = require('./routes/orders')
+const { shedulleRouter } = require('./routes/shedulle')
+const { SERVER, DEV_MODE } = require('./config')
+const { usersRouter } = require('./routes/users')
+const { existsInCollection } = require('./storage/mongoose')
+const { getMasterById } = require('./storage/masters')
 
-const validate = initData => {
-  const secret = crypto.createHmac('sha256', 'WebAppData').update(config.API_TOKEN)
+
+const validate = (initData, token) => {
+  const secret = crypto.createHmac('sha256', 'WebAppData').update(token)
 
   const params = Object.fromEntries(new URLSearchParams(initData))
   const checkString = Object.keys(params)
@@ -20,19 +33,27 @@ const validate = initData => {
   return hash === _hash
 }
 
-const checkValid = (req, res, next) => {
+const checkValid = async (req, res, next) => {
   if (DEV_MODE) return next()
-  const initData = req.header('X-Validation-Data')
-  const validateResult = validate(initData) 
+  if (req.method === 'OPTIONS') return next()
+  
+  const initData = getInitData(req)
+  const masterId = getMasterId(req)
+  
+  const master = await getMasterById(masterId)
+  
+  if (master) {
+    const validateResult = validate(initData, master.telegramToken)
+    if (validateResult) return next()
+  }
 
-  if (validateResult) return next()
   res.status(403)
   res.end()
 }
 
 const addHead = (_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', '*');
   next()
 }
@@ -44,18 +65,7 @@ const logger = (req, _, next) => {
   next()
 }
 
-
-
 let app = express()
-const https = require('https')
-const path = require('path')
-const fs = require('fs')
-const { servicesRouter } = require('./routes/services')
-const { categoriesRouter } = require('./routes/categories')
-const { ordersRouter } = require('./routes/orders')
-const { shedulleRouter } = require('./routes/shedulle')
-const { SERVER, DEV_MODE } = require('./config')
-const { usersRouter } = require('./routes/users')
 
 const key = fs.readFileSync('.cert/key.pem').toString()
 const cert = fs.readFileSync('.cert/cert.pem').toString()

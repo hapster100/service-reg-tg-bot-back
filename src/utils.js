@@ -122,8 +122,18 @@ function shedulleSlots(year, month, services, orders, shedulle, duration) {
   return slotsByDay
 }
 
+function getMasterId(req) {
+  return req.header('X-Master-Id') || ''
+}
+
+function getInitData(req) {
+  return req.header('X-Validation-Data') || ''
+}
+
 module.exports = {
   subIntervals,
   getSlots,
   shedulleSlots,
+  getMasterId,
+  getInitData,
 }

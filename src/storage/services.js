@@ -1,7 +1,7 @@
-const { getAllFromCollectoion, getById, addToCollection } = require('./firebase')
+const { getById, addToCollection, getFromCollectionWhere } = require('./mongoose')
 
-async function getServices() {
-  return await getAllFromCollectoion('services')
+async function getServices(masterId) {
+  return await getFromCollectionWhere('services', ['masterId', '==', masterId])
 }
 
 async function getService(id) {

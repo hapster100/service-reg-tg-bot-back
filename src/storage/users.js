@@ -1,4 +1,7 @@
-const { getById, existsInCollection, setToCollection, updateInCollection, getByIds } = require("./firebase");
+const { 
+  getById, existsInCollection, setToCollection, 
+  updateInCollection, getByIds 
+} = require("./mongoose");
 
 async function getUser(id) {
   return await getById('users', id)
