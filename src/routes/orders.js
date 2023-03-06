@@ -12,6 +12,9 @@ const { getServices } = require('../storage/services')
 const { getMonthShedulle } = require('../storage/shedulle')
 const { shedulleSlots, getMasterId } = require('../utils')
 
+const { newOrderNotify } = require('../telegram/newOrderNotify')
+const { deleteOrderNotify } = require('../telegram/deleteOrderNotify')
+
 ordersRouter = express.Router()
 
 ordersRouter.get('/user/:id', async (req, res) => {
@@ -45,8 +48,12 @@ ordersRouter.get('/:id', async (req, res) => {
 ordersRouter.delete('/:id', async (req, res) => {
   const { id } = req.params
   try {
+    const order = await getOrderById(id)
     await deleteOrder(id)
     res.send({ success: true })
+
+    deleteOrderNotify(order)
+
   } catch (e) {
     res.send({ success: false })
   }
@@ -73,9 +80,14 @@ ordersRouter.post('/', async (req, res) => {
   const { order } = req.body
   const masterId = getMasterId(req)
 
+  const orderWithMaster = { ...order, masterId }
+
   try {
-    await addOrder({ ...order, masterId })
+    await addOrder(orderWithMaster)
     res.send({ success: true })
+
+    newOrderNotify(orderWithMaster)
+  
   } catch (e) {
     res.send({ success: false })
   }

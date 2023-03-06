@@ -4,6 +4,9 @@ const {
 } = require("./mongoose");
 
 async function getUser(id) {
+  if (!await existsInCollection('users', id)) {
+    await updateUser({ id })
+  }
   return await getById('users', id)
 }
 

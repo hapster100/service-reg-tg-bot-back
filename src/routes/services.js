@@ -1,5 +1,5 @@
 const express = require('express')
-const { getServices, getService, addService } = require('../storage/services')
+const { getServices, getService, addService, deleteService } = require('../storage/services')
 const { getMasterId } = require('../utils')
 
 servicesRouter = express.Router()
@@ -27,6 +27,16 @@ servicesRouter.get('/:id', async (req, res) => {
   res.send(JSON.stringify({ service }))
 })
 
+servicesRouter.delete('/:id', async (req, res) => {
+  const { id } = req.params
+  console.log('delete', id)
+  try {
+    await deleteService(id)
+    res.send({ success: true })
+  } catch (e) {
+    res.send({ success: false })
+  }
+})
 
 module.exports = {
   servicesRouter

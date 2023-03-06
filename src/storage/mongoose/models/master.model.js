@@ -18,6 +18,10 @@ const MasterSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  address: {
+    type: String,
+    required: true,
+  },
 })
 
 MasterSchema.set('toObject', {

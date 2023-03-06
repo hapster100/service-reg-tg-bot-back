@@ -1,6 +1,7 @@
 const { 
   DAYS
 } = require('./config')
+const { getServices } = require('./storage/services')
 
 function subIntervals(free, taken) {
   const eventTypes = {
@@ -123,11 +124,32 @@ function shedulleSlots(year, month, services, orders, shedulle, duration) {
 }
 
 function getMasterId(req) {
-  return req.header('X-Master-Id') || ''
+  let res = req.header('X-Master-Id') || ''
+  return res.replace(/=$/, '')
 }
 
 function getInitData(req) {
   return req.header('X-Validation-Data') || ''
+}
+
+function timeStr(h, m) {
+  return [h,m].map(x => `${x}`.padStart(2, '0')).join(':')
+}
+
+function dateStr(date) {
+  return date.toLocaleString('ru', {
+    day: '2-digit',
+    month: 'short',
+  })
+}
+
+async function formatServices(masterId, serviceIds) {
+  const services = await getServices(masterId)
+  const serviceById = services.reduce((acc, n) => (acc[n.id] = n, acc), {}) 
+  return serviceIds
+    .map(id => serviceById[id])
+    .filter(x => x)
+    .map(x => x.name)
 }
 
 module.exports = {
@@ -136,4 +158,7 @@ module.exports = {
   shedulleSlots,
   getMasterId,
   getInitData,
+  timeStr,
+  dateStr,
+  formatServices,
 }

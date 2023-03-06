@@ -5,15 +5,16 @@ const { getMasterId, getInitData } = require('./utils')
 const https = require('https')
 const path = require('path')
 const fs = require('fs')
+
 const { servicesRouter } = require('./routes/services')
 const { categoriesRouter } = require('./routes/categories')
 const { ordersRouter } = require('./routes/orders')
 const { shedulleRouter } = require('./routes/shedulle')
-const { SERVER, DEV_MODE } = require('./config')
+const { mastersRouter } = require('./routes/masters')
 const { usersRouter } = require('./routes/users')
-const { existsInCollection } = require('./storage/mongoose')
-const { getMasterById } = require('./storage/masters')
 
+const { SERVER, DEV_MODE } = require('./config')
+const { getMasterById } = require('./storage/masters')
 
 const validate = (initData, token) => {
   const secret = crypto.createHmac('sha256', 'WebAppData').update(token)
@@ -39,7 +40,6 @@ const checkValid = async (req, res, next) => {
   
   const initData = getInitData(req)
   const masterId = getMasterId(req)
-  
   const master = await getMasterById(masterId)
   
   if (master) {
@@ -69,7 +69,7 @@ let app = express()
 
 const key = fs.readFileSync('.cert/key.pem').toString()
 const cert = fs.readFileSync('.cert/cert.pem').toString()
-
+const ca = fs.readFileSync('.cert/ca.pem').toString()
 
 const routers = {
   '/services': servicesRouter,
@@ -77,6 +77,7 @@ const routers = {
   '/orders': ordersRouter,
   '/shedulle': shedulleRouter,
   '/users': usersRouter,
+  '/masters': mastersRouter,
 }
 
 app.use(addHead)
@@ -98,7 +99,7 @@ app.post('/validate', (req, res) => {
 })
 
 if (SERVER.HTTPS) {
-  app = https.createServer({key, cert}, app)
+  app = https.createServer({key, cert, ca}, app)
 }
 
 app.listen(config.SERVER.PORT, () => {
