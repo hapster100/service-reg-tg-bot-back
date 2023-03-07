@@ -1,4 +1,5 @@
 const { getMasterById } = require("../storage/masters")
+const { deleteOrderNotifys } = require("../storage/notifies")
 const { getUser } = require('../storage/users')
 const { timeStr, dateStr, formatServices } = require("../utils")
 const { tgApi } = require("./api/base")
@@ -12,7 +13,7 @@ async function deleteOrderNotify(order) {
     },
     date,
     userId,
-    serviceIds
+    serviceIds,
   } = order
 
   const master = await getMasterById(masterId)
@@ -32,6 +33,8 @@ async function deleteOrderNotify(order) {
     userId,
     `Запись отменена: ${dateTimeStr}\n` + serviceNames.join('\n')
   )
+
+  await deleteOrderNotifys(order.id)
 }
 
 module.exports = {

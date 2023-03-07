@@ -80,13 +80,11 @@ ordersRouter.post('/', async (req, res) => {
   const { order } = req.body
   const masterId = getMasterId(req)
 
-  const orderWithMaster = { ...order, masterId }
-
   try {
-    await addOrder(orderWithMaster)
+    const newOrder = await addOrder({ ...order, masterId })
     res.send({ success: true })
 
-    newOrderNotify(orderWithMaster)
+    newOrderNotify(newOrder)
   
   } catch (e) {
     res.send({ success: false })

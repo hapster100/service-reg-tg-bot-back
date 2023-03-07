@@ -29,7 +29,6 @@ servicesRouter.get('/:id', async (req, res) => {
 
 servicesRouter.delete('/:id', async (req, res) => {
   const { id } = req.params
-  console.log('delete', id)
   try {
     await deleteService(id)
     res.send({ success: true })

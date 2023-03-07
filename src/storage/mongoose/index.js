@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const { CategoryModel } = require('./models/category.model')
 const { MasterModel } = require('./models/master.model')
+const { NotifyModel } = require('./models/notify.model')
 const { OrderModel } = require('./models/order.model')
 const { ServiceModel } = require('./models/service.model')
 const { ShedulleModel } = require('./models/shedulle.model')
@@ -15,6 +16,7 @@ const getModel = name => ({
   'orders': OrderModel,
   'shedulle': ShedulleModel,
   'masters': MasterModel,
+  'notifies': NotifyModel,
 })[name]
 
 const item = doc => {
@@ -22,11 +24,12 @@ const item = doc => {
   return item
 }
 
-const addToCollection = async (name, item) => {
+const addToCollection = async (name, fields) => {
   await connect
   const Model = getModel(name)
-  const newItem = new Model(item)
+  const newItem = new Model(fields)
   await newItem.save()
+  return item(newItem)
 }
 
 const getAllFromCollectoion = async (name) => {

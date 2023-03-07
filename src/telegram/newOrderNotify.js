@@ -1,4 +1,5 @@
 const { getMasterById } = require("../storage/masters")
+const { addNotify } = require("../storage/notifies")
 const { getUser } = require("../storage/users")
 const { timeStr, dateStr, formatServices } = require("../utils")
 const { tgApi } = require("./api/base")
@@ -10,14 +11,11 @@ async function newOrderNotify(order) {
       hours: h,
       minutes: m,
     },
-    year,
-    month,
-    day,
+    date,
     userId,
     serviceIds,
   } = order
 
-  const date = new Date(year, month, day)
   const master = await getMasterById(masterId)
   const client = await getUser(userId)
 
@@ -35,6 +33,26 @@ async function newOrderNotify(order) {
     userId,
     `Вы записаны: ${dateTimeStr}\n` + serviceNames.join('\n')
   )
+  
+  const now = new Date()
+  const byDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1, h, m)
+  const byTwoHour = new Date(date.getFullYear(), date.getMonth(), date.getDate(), h - 2, m)
+  
+  if (now < byDay) {
+    await addNotify(
+      order.id,
+      `Напоминаем, вы записаны:\n${dateTimeStr}\n` + serviceNames.join('\n'),
+      byDay
+    )
+  }
+
+  if (now < byTwoHour) {
+    await addNotify(
+      order.id,
+      `Напоминаем, вы записаны:\n${dateTimeStr}\n` + serviceNames.join('\n'),
+      byTwoHour,
+    )
+  }
 }
 
 module.exports = {

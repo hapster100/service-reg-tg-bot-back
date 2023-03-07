@@ -1,29 +1,39 @@
-async function polling(offset = 0) {
-  const updates = await api.getUpdates(offset+1)
-
-  console.log('todo polling')
-
-  const newOffset = Math.max(offset, ...updates.map(update => update.id))
-  polling(newOffset)
-}
+const { getMasterById } = require("../storage/masters")
+const { getNotifysBefore, deleteNotify } = require("../storage/notifies")
+const { getOrderById } = require("../storage/orders")
+const { tgApi } = require("./api/base")
 
 async function notify() {
-
-  console.log('todo notify')
   
+  const notifies = await getNotifysBefore(new Date())
+  const masters = {}
+
+  console.log('notify', new Date().toString())
+
+  for(const notify of notifies) {
+    const {
+      text,
+      orderId,
+      id
+    } = notify
+    const order = await getOrderById(orderId)
+    const {
+      masterId,
+      userId,
+    } = order
+    
+    if (!masters[masterId]) {
+      masters[masterId] = await getMasterById(masterId)
+    }
+
+    await tgApi(masters[masterId].telegramToken)
+      .sendMessage(userId, text)
+
+    await deleteNotify(id)
+  }
   setTimeout(notify, 1000 * 60)
 }
 
-async function startBot() {
-  console.log('starting bot server', new Date().toLocaleTimeString())
-
-  const prevUpdates = await api.getUpdates()
-  const offset = Math.max(0, ...prevUpdates.map(update => update.id))
-  
-  polling(offset)
-  notify()
-}
-
 module.exports = {
-  startBot
+  notify
 }

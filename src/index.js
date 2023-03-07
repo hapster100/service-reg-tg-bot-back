@@ -15,6 +15,7 @@ const { usersRouter } = require('./routes/users')
 
 const { SERVER, DEV_MODE } = require('./config')
 const { getMasterById } = require('./storage/masters')
+const { notify } = require('./telegram')
 
 const validate = (initData, token) => {
   const secret = crypto.createHmac('sha256', 'WebAppData').update(token)
@@ -89,8 +90,21 @@ for(const path in routers) {
   app.use('/api' + path, checkValid, routers[path])
 }
 
-app.get('*', (_, res) => {
-  res.redirect('/');
+app.get('*', (req, res) => {
+  const appRoutes = [
+    '/neworder',
+    '/mylist',
+    '/services',
+    '/newservice',
+    '/newcategory',
+    '/shedulle',
+    '/profile'
+  ]
+  if (appRoutes.includes(req.url)) {
+    res.redirect('/');
+  } else {
+    res.send("Удачи")
+  }
 })
 
 app.post('/validate', (req, res) => {
@@ -104,4 +118,5 @@ if (SERVER.HTTPS) {
 
 app.listen(config.SERVER.PORT, () => {
   console.log('started on', config.SERVER.PORT)
+  notify()
 })

@@ -113,7 +113,7 @@ function shedulleSlots(year, month, services, orders, shedulle, duration) {
     
     for (const order of ordersByDay[day]) {
       const start = order.time.hours * 60 + order.time.minutes
-      const duration = order.serviceIds.reduce((acc, id) => acc + serviceDuration[id], 0)
+      const duration = order.serviceIds.reduce((acc, id) => acc + (serviceDuration[id] || 0), 0)
       taken.push([start, start + duration])
     }
 
