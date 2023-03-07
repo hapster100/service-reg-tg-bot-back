@@ -16,6 +16,8 @@ const { usersRouter } = require('./routes/users')
 const { SERVER, DEV_MODE } = require('./config')
 const { getMasterById } = require('./storage/masters')
 const { notify } = require('./telegram')
+const { getService } = require('./storage/services')
+const { getImage } = require('./storage/images')
 
 const validate = (initData, token) => {
   const secret = crypto.createHmac('sha256', 'WebAppData').update(token)
@@ -83,12 +85,30 @@ const routers = {
 
 app.use(addHead)
 app.use(logger)
-app.use(express.json())
+app.use(express.json({ limit: '2mb' }))
 app.use(express.static(path.join(__dirname, '../bundle')))
 
 for(const path in routers) {
   app.use('/api' + path, checkValid, routers[path])
 }
+
+app.get('/img/:id', async (req, res) => {
+  const { id } = req.params
+  console.log(id)
+  try {
+    const img = await getImage(id)
+    const buff = img.data.buffer
+    res.writeHead(200, {
+      'Content-Type': img.imgType,
+      'Content-Length': buff.length,
+    })
+    res.end(buff)
+  } catch (e) {
+    console.log(e)
+    res.writeHead(404)
+    res.end()
+  }
+})
 
 app.get('*', (req, res) => {
   const appRoutes = [

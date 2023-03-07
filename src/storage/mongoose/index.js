@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const { CategoryModel } = require('./models/category.model')
+const { ImageModel } = require('./models/image.model')
 const { MasterModel } = require('./models/master.model')
 const { NotifyModel } = require('./models/notify.model')
 const { OrderModel } = require('./models/order.model')
@@ -17,6 +18,7 @@ const getModel = name => ({
   'shedulle': ShedulleModel,
   'masters': MasterModel,
   'notifies': NotifyModel,
+  'images': ImageModel,
 })[name]
 
 const item = doc => {
