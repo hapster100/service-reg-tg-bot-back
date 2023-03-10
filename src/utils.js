@@ -143,6 +143,20 @@ function dateStr(date) {
   })
 }
 
+function phoneStr(phone) {
+
+  const digits = phone.replace(/\D/g, '').padEnd(10, 'X')
+  
+  const parts = [
+    digits.slice(0, 3),
+    digits.slice(3, 6),
+    digits.slice(6, 8),
+    digits.slice(8)
+  ]
+
+  return `+7 (${parts[0]}) ${parts[1]}-${parts[2]}-${parts[3]}`
+}
+
 async function formatServices(masterId, serviceIds) {
   const services = await getServices(masterId)
   const serviceById = services.reduce((acc, n) => (acc[n.id] = n, acc), {}) 
@@ -160,5 +174,6 @@ module.exports = {
   getInitData,
   timeStr,
   dateStr,
+  phoneStr,
   formatServices,
 }

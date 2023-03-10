@@ -1,7 +1,7 @@
 const { getMasterById } = require("../storage/masters")
 const { deleteOrderNotifys } = require("../storage/notifies")
 const { getUser } = require('../storage/users')
-const { timeStr, dateStr, formatServices } = require("../utils")
+const { timeStr, dateStr, formatServices, phoneStr } = require("../utils")
 const { tgApi } = require("./api/base")
 
 async function deleteOrderNotify(order) {
@@ -22,11 +22,14 @@ async function deleteOrderNotify(order) {
   const dateTimeStr = [timeStr(h, m), dateStr(date)].join(', ')
 
   const serviceNames = await formatServices(masterId, serviceIds)
+  
+  const clientStr = `\nИмя: ${client?.name || '---'}\nНомер: ${phoneStr(client?.phone || '')}` 
 
   await tgApi(master.telegramToken).sendMessage(
     master.userId,
-    `Запись отменена: ${dateTimeStr}\n` + serviceNames.join('\n') +
-    `\nИмя: ${client?.name || '---'}\nНомер: ${client?.phone || '---'}`
+    `Запись отменена: ${dateTimeStr}\n` +
+    serviceNames.join('\n') +
+    clientStr
   )
 
   await tgApi(master.telegramToken).sendMessage(
