@@ -1,5 +1,5 @@
 const express = require('express')
-const { getCategories, addCategory } = require('../storage/categories')
+const { getCategories, addCategory, updateCategory, deleteCategory } = require('../storage/categories')
 const { getMasterId } = require('../utils')
 
 categoriesRouter = express.Router()
@@ -17,6 +17,33 @@ categoriesRouter.post('/', async (req, res) => {
   
   try {
     await addCategory({...category, masterId })
+    res.send({ success: true })
+  } catch (e) {
+    res.send({ success: false })
+  }
+})
+
+categoriesRouter.put('/:id', async (req, res) => {
+  const { id } = req.params
+  const { category } = req.body
+
+  if (category.id === id) {
+    delete category.id
+    try {
+      await updateCategory(id, category)
+      res.send({ success: true })
+    } catch (e) {
+      res.send({ success: false })
+    }
+  } else {
+    res.send({ success: false })
+  }
+})
+
+categoriesRouter.delete('/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    await deleteCategory(id)
     res.send({ success: true })
   } catch (e) {
     res.send({ success: false })

@@ -3,10 +3,12 @@ const { addToCollection, deleteFromCollection, getById } = require("./mongoose")
 async function addBase64Image(base64) {
   const type = base64.match(/image\/.*?(?=;)/)?.[0] ?? 'image/png'
   const data = Buffer.from(base64.replace(/.*base64,/, ''), 'base64')
-  return await addToCollection('images', {
+  const image = await addToCollection('images', {
     data,
     type
   })
+  console.log('new image', image.id)
+  return image
 }
 
 async function getImage(id) {
@@ -14,6 +16,7 @@ async function getImage(id) {
 }
 
 async function deleteImage(id) {
+  console.log('delete image', id)
   return await deleteFromCollection('images', id)
 }
 
