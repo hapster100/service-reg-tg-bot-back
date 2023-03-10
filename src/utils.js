@@ -97,6 +97,8 @@ function shedulleSlots(year, month, services, orders, shedulle, duration) {
   const currYear = currDate.getFullYear()
   const currMonth = currDate.getMonth()
   const currDay = currDate.getDate()
+  const currHour = currDate.getHours()
+  const currMinute = currDate.getMinutes()
 
   for(let i = 0; i < daysInMonth; i++) {
     const day = i + 1
@@ -115,6 +117,10 @@ function shedulleSlots(year, month, services, orders, shedulle, duration) {
       const start = order.time.hours * 60 + order.time.minutes
       const duration = order.serviceIds.reduce((acc, id) => acc + (serviceDuration[id] || 0), 0)
       taken.push([start, start + duration])
+    }
+
+    if (year === currYear && month === currMonth && day === currDay) {
+      taken.push([0, currHour*60 + currMinute])
     }
 
     slotsByDay[day] = getSlots(free, taken, duration)

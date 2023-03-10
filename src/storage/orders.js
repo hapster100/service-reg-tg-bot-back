@@ -2,7 +2,6 @@ const {
   addToCollection,
   updateInCollection,
   getById,
-  deleteFromCollection,
   getFromCollectionWhere
 } = require('./mongoose')
 
@@ -16,6 +15,10 @@ function transformDate(order) {
   return order
 }
 
+function filterDeleted(order) {
+  return !order.deleted
+}
+
 async function getDayOrders(year, month, day, masterId) {
   const from = new Date(Date.UTC(year, month, day))
   const to = new Date(Date.UTC(year, month, day + 1))
@@ -24,8 +27,7 @@ async function getDayOrders(year, month, day, masterId) {
     ['date', '<', to],
     ['masterId', '==', masterId]
   )
-
-  return orders.map(transformDate)
+  return orders.map(transformDate).filter(filterDeleted)
 }
 
 async function getMonthOrders(year, month, masterId) {
@@ -36,7 +38,7 @@ async function getMonthOrders(year, month, masterId) {
     ['date', '<', to],
     ['masterId', '==', masterId],
   )
-  return orders.map(transformDate)
+  return orders.map(transformDate).filter(filterDeleted)
 }
 
 async function getUserOrders(userId, masterId) {
@@ -44,7 +46,7 @@ async function getUserOrders(userId, masterId) {
     ['userId', '==', userId],
     ['masterId', '==', masterId],
   )
-  return orders.map(transformDate)
+  return orders.map(transformDate).filter(filterDeleted)
 }
 
 async function addOrder({ month, year, day, time, serviceIds, userId, masterId }) {
@@ -66,7 +68,7 @@ async function getOrderById(orderId) {
 }
 
 async function deleteOrder(orderId) {
-  return await deleteFromCollection('orders', orderId)
+  return updateOrder(orderId, { deleted: true })
 }
 
 module.exports = {

@@ -34,6 +34,10 @@ const OrderSchema = new Schema({
   userId: {
     type: String,
     ref: 'User'
+  },
+  deleted: {
+    type: Boolean,
+    default: false
   }
 })
 

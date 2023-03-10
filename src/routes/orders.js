@@ -29,7 +29,7 @@ ordersRouter.post('/get', async (req, res) => {
   const { year, month, day } = req.body
   const masterId = getMasterId(req)
 
-  let orders;
+  let orders = [];
   if (!day) {
     orders = await getMonthOrders(year, month, masterId)
   } else {

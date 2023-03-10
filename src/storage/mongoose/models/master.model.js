@@ -22,6 +22,10 @@ const MasterSchema = new Schema({
     type: String,
     required: true,
   },
+  successImageUrl: {
+    type: String,
+    default: ''
+  } 
 })
 
 MasterSchema.set('toObject', {

@@ -36,6 +36,13 @@ async function newOrderNotify(order) {
     userId,
     `Вы записаны: ${dateTimeStr}\n` + serviceNames.join('\n')
   )
+  if (master.successImageUrl) {
+    await tgApi(master.telegramToken).sendPhoto(
+      userId,
+      '',
+      master.successImageUrl,
+    )
+  }
   
   const now = new Date()
   const byDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1, h, m)

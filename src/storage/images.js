@@ -20,7 +20,24 @@ async function deleteImage(id) {
   return await deleteFromCollection('images', id)
 }
 
+async function replaceImage(oldUrl, newUrl) {
+  if (oldUrl !== newUrl) {
+    if (oldUrl !== newUrl) {
+      if (oldUrl.startsWith('https://aland97.ru/img/')) {
+        const imgId = oldUrl.match(/(?<=\/img\/).*/)?.[0]
+        await deleteImage(imgId)
+      }
+      if (newUrl && /data:image\/[a-z]*;base64/i.test(newUrl)) {
+        const image = await addBase64Image(newUrl)
+        return `https://aland97.ru/img/${image.id}`
+      }
+    }
+  }
+  return newUrl
+}
+
 module.exports = {
+  replaceImage,
   addBase64Image,
   deleteImage,
   getImage,
