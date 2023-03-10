@@ -39,8 +39,15 @@ const tgApi = (token) => {
   return {
     async sendMessage(userId, text) {
       return await tgApiFetch('sendMessage', 'POST', {
+        chat_id: userId,
         text,
-        'chat_id': userId
+      })
+    },
+    async sendPhoto(userId, text, url) {
+      return await tgApiFetch('sendPhoto', 'POST', {
+        chat_id: userId,
+        caption: text,
+        photo: url,
       })
     }
   }
