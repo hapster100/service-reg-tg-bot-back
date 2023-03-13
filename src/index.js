@@ -74,6 +74,34 @@ const key = fs.readFileSync('.cert/key.pem').toString()
 const cert = fs.readFileSync('.cert/cert.pem').toString()
 const ca = fs.readFileSync('.cert/ca.pem').toString()
 
+const counter = {}
+app.use((req, _, next) => {
+  const base = req.url.match(/\/[^\/]*/)
+  if (base) {
+    counter[base[0]] = (counter[base[0]] || 0) + 1
+  }
+  next()
+})
+
+app.get('/_counter', (req, res) => {
+  res.send(`
+    <html>
+      <head>
+      </head>
+      <body>
+        ${
+          Object.entries(counter)
+          .sort((a,b) => b[1] - a[1])
+          .map(([key, value]) => `
+            <div>${(value.toString() + ' ').padEnd(10, '.')} ${key}</div>
+          `).join('').trim()
+        }
+      </body>
+    </html>
+  `.trim().replace(/>\s+</g, '><')
+  )
+})
+
 const routers = {
   '/services': servicesRouter,
   '/categories': categoriesRouter,
@@ -95,7 +123,6 @@ for(const path in routers) {
 
 app.get('/img/:id', async (req, res) => {
   const { id } = req.params
-  console.log(id)
   try {
     const img = await getImage(id)
     const buff = img.data.buffer
@@ -109,14 +136,6 @@ app.get('/img/:id', async (req, res) => {
     res.writeHead(404)
     res.end()
   }
-})
-
-app.get('/todo/*', (_, res) => {
-  res.redirect('/todo')
-})
-
-app.get('*', (_, res) => {
-  res.redirect('/');
 })
 
 app.post('/validate', (req, res) => {
