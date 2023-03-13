@@ -1,5 +1,4 @@
 
-const { DAYS } = require('../config')
 const { existsInCollection, getById, setToCollection, updateInCollection } = require('./mongoose')
 
 const monthId = (year, month, masterId) => [year, month, masterId].join('.')
@@ -21,7 +20,7 @@ async function createMonthShedulle(year, month, masterId) {
   for(let i = 1; i <= daysInMonth; i++) {
     days[i] = {
       free: true,
-      intervals: DAYS.INTERVALS.map(([from, to]) => ({from, to})),
+      intervals: [],
     }
   }
 
