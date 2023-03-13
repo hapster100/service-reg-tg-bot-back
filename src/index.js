@@ -1,6 +1,5 @@
 const express = require('express')
 const crypto = require('crypto')
-const config = require('./config')
 const { getMasterId, getInitData } = require('./utils')
 const https = require('https')
 const path = require('path')
@@ -14,7 +13,7 @@ const { mastersRouter } = require('./routes/masters')
 const { usersRouter } = require('./routes/users')
 const { statisticRouter } = require('./routes/stat')
 
-const { SERVER, DEV_MODE } = require('./config')
+const { USE_HTTPS, SERVER_PORT, DEV_MODE } = require('./config')
 const { getMasterById } = require('./storage/masters')
 const { notify } = require('./telegram')
 const { getImage } = require('./storage/images')
@@ -83,7 +82,7 @@ app.use((req, _, next) => {
   next()
 })
 
-app.get('/_counter', (req, res) => {
+app.get('/_counter', (_, res) => {
   res.send(`
     <html>
       <head>
@@ -143,11 +142,11 @@ app.post('/validate', (req, res) => {
   res.send({ result: validate(initData) })
 })
 
-if (SERVER.HTTPS) {
+if (USE_HTTPS) {
   app = https.createServer({key, cert, ca}, app)
 }
 
-app.listen(config.SERVER.PORT, () => {
-  console.log('started on', config.SERVER.PORT)
+app.listen(SERVER_PORT, () => {
+  console.log('started on', SERVER_PORT)
   notify()
 })
