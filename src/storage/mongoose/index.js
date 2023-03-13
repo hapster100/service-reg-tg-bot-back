@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { MONGODB_CONNECT_STR } = require('../../config')
 const { CategoryModel } = require('./models/category.model')
 const { ImageModel } = require('./models/image.model')
 const { MasterModel } = require('./models/master.model')
@@ -8,7 +9,7 @@ const { ServiceModel } = require('./models/service.model')
 const { ShedulleModel } = require('./models/shedulle.model')
 const { UserModel } = require('./models/user.model')
 
-const connect = mongoose.connect('mongodb://127.0.0.1:27017/test')
+const connect = mongoose.connect(MONGODB_CONNECT_STR)
 
 const getModel = name => ({
   'users': UserModel,

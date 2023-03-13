@@ -1,3 +1,4 @@
+const { HOST } = require("../config")
 const { addToCollection, deleteFromCollection, getById } = require("./mongoose")
 
 async function addBase64Image(base64) {
@@ -23,13 +24,13 @@ async function deleteImage(id) {
 async function replaceImage(oldUrl, newUrl) {
   if (oldUrl !== newUrl) {
     if (oldUrl !== newUrl) {
-      if (oldUrl.startsWith('https://aland97.ru/img/')) {
+      if (oldUrl.startsWith(`${HOST}/img/`)) {
         const imgId = oldUrl.match(/(?<=\/img\/).*/)?.[0]
         await deleteImage(imgId)
       }
       if (newUrl && /data:image\/[a-z]*;base64/i.test(newUrl)) {
         const image = await addBase64Image(newUrl)
-        return `https://aland97.ru/img/${image.id}`
+        return `${HOST}/img/${image.id}`
       }
     }
   }
