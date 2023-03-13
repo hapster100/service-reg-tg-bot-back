@@ -9,7 +9,12 @@ const { ServiceModel } = require('./models/service.model')
 const { ShedulleModel } = require('./models/shedulle.model')
 const { UserModel } = require('./models/user.model')
 
-const connect = mongoose.connect(MONGODB_CONNECT_STR)
+let connect = mongoose.connect(MONGODB_CONNECT_STR)
+
+const setConnection = async connectString => {
+  await mongoose.disconnect()
+  connect = mongoose.connect(connectString)
+}
 
 const getModel = name => ({
   'users': UserModel,
@@ -119,4 +124,5 @@ module.exports = {
   getById,
   getByIds,
   getFromCollectionWhere,
+  setConnection,
 }
