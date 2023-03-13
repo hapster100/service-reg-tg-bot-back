@@ -11,25 +11,31 @@ async function notify() {
   console.log('notify', new Date().toString())
 
   for(const notify of notifies) {
-    const {
-      text,
-      orderId,
-      id
-    } = notify
-    const order = await getOrderById(orderId)
-    const {
-      masterId,
-      userId,
-    } = order
-    
-    if (!masters[masterId]) {
-      masters[masterId] = await getMasterById(masterId)
+    try {
+      const {
+        text,
+        orderId,
+        id
+      } = notify
+      const order = await getOrderById(orderId)
+      const {
+        masterId,
+        userId,
+      } = order
+      
+      if (!masters[masterId]) {
+        masters[masterId] = await getMasterById(masterId)
+      }
+  
+      await tgApi(masters[masterId].telegramToken)
+        .sendMessage(userId, text)
+  
+      await deleteNotify(id)
+    } catch(e) {
+      console.error('\nNOTIFY ERROR:')
+      console.error('notify:', notify)
+      console.error(e)
     }
-
-    await tgApi(masters[masterId].telegramToken)
-      .sendMessage(userId, text)
-
-    await deleteNotify(id)
   }
   setTimeout(notify, 1000 * 60)
 }
