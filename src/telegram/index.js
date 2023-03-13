@@ -15,7 +15,6 @@ async function notify() {
       const {
         text,
         orderId,
-        id
       } = notify
       const order = await getOrderById(orderId)
       const {
@@ -30,11 +29,12 @@ async function notify() {
       await tgApi(masters[masterId].telegramToken)
         .sendMessage(userId, text)
   
-      await deleteNotify(id)
     } catch(e) {
       console.error('\nNOTIFY ERROR:')
       console.error('notify:', notify)
       console.error(e)
+    } finally {
+      await deleteNotify(notify.id)    
     }
   }
   setTimeout(notify, 1000 * 60)
