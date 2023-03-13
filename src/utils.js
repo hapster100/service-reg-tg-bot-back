@@ -1,6 +1,4 @@
-const { 
-  DAYS
-} = require('./config')
+const { STEP } = require('./config')
 const { getServices } = require('./storage/services')
 
 function subIntervals(free, taken) {
@@ -64,13 +62,13 @@ function getSlots(free, taken, duration) {
   const slots = []
 
   for(let [start, end] of intervals) {
-    if (start%DAYS.STEP !== 0) {
-      start += DAYS.STEP
-      start -= start%DAYS.STEP 
+    if (start%STEP !== 0) {
+      start += STEP
+      start -= start%STEP 
     }
     while(start + duration <= end) {
       slots.push(start)
-      start += DAYS.STEP
+      start += STEP
     }
   }
 
