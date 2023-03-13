@@ -49,6 +49,16 @@ async function getUserOrders(userId, masterId) {
   return orders.map(transformDate).filter(filterDeleted)
 }
 
+async function getStatisticOrders(masterId, period) {
+  const { from, to } = period
+  const orders = await getFromCollectionWhere('orders',
+    ['masterId', '==', masterId],
+    ['date', '>=', from],
+    ['date', '<=', to]
+  )
+  return orders.map(transformDate)
+}
+
 async function addOrder({ month, year, day, time, serviceIds, userId, masterId }) {
   return await addToCollection('orders', {
     date: new Date(Date.UTC(year, month, day)),
@@ -79,4 +89,5 @@ module.exports = {
   getMonthOrders,
   getUserOrders,
   getOrderById,
+  getStatisticOrders,
 }

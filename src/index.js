@@ -12,11 +12,11 @@ const { ordersRouter } = require('./routes/orders')
 const { shedulleRouter } = require('./routes/shedulle')
 const { mastersRouter } = require('./routes/masters')
 const { usersRouter } = require('./routes/users')
+const { statisticRouter } = require('./routes/stat')
 
 const { SERVER, DEV_MODE } = require('./config')
 const { getMasterById } = require('./storage/masters')
 const { notify } = require('./telegram')
-const { getService } = require('./storage/services')
 const { getImage } = require('./storage/images')
 
 const validate = (initData, token) => {
@@ -81,6 +81,7 @@ const routers = {
   '/shedulle': shedulleRouter,
   '/users': usersRouter,
   '/masters': mastersRouter,
+  '/stat': statisticRouter,
 }
 
 app.use(addHead)
@@ -110,21 +111,12 @@ app.get('/img/:id', async (req, res) => {
   }
 })
 
-app.get('*', (req, res) => {
-  const appRoutes = [
-    '/neworder',
-    '/mylist',
-    '/services',
-    '/newservice',
-    '/newcategory',
-    '/shedulle',
-    '/profile'
-  ]
-  if (appRoutes.includes(req.url)) {
-    res.redirect('/');
-  } else {
-    res.send("Удачи")
-  }
+app.get('/todo/*', (_, res) => {
+  res.redirect('/todo')
+})
+
+app.get('*', (_, res) => {
+  res.redirect('/');
 })
 
 app.post('/validate', (req, res) => {
