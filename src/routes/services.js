@@ -1,6 +1,7 @@
 const express = require('express')
 const { getServices, getService, addService, deleteService, updateService } = require('../storage/services')
 const { getMasterId } = require('../utils')
+const { onlyMaster } = require('./midlwares/onlyMaster')
 
 servicesRouter = express.Router()
 
@@ -10,7 +11,7 @@ servicesRouter.get('/', async (req, res) => {
   res.send(JSON.stringify({ services }))
 })
 
-servicesRouter.post('/', async (req, res) => {
+servicesRouter.post('/', onlyMaster, async (req, res) => {
   const { service } = req.body
   const masterId = getMasterId(req)
 
@@ -28,7 +29,7 @@ servicesRouter.get('/:id', async (req, res) => {
   res.send(JSON.stringify({ service }))
 })
 
-servicesRouter.put('/:id', async (req, res) => {
+servicesRouter.put('/:id', onlyMaster, async (req, res) => {
   const { id } = req.params
   const { service } = req.body
   
@@ -45,7 +46,7 @@ servicesRouter.put('/:id', async (req, res) => {
   }
 })
 
-servicesRouter.delete('/:id', async (req, res) => {
+servicesRouter.delete('/:id', onlyMaster, async (req, res) => {
   const { id } = req.params
   try {
     await deleteService(id)

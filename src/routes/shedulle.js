@@ -1,6 +1,7 @@
 const express = require('express')
 const { getMonthShedulle, updateMonthShedulle } = require('../storage/shedulle')
 const { getMasterId } = require('../utils')
+const { onlyMaster } = require('./midlwares/onlyMaster')
 
 const shedulleRouter = express.Router()
 
@@ -15,7 +16,7 @@ shedulleRouter.post('/', async (req, res) => {
   }
 })
 
-shedulleRouter.put('/', async (req, res) => {
+shedulleRouter.put('/', onlyMaster, async (req, res) => {
   const { month, year, shedulle } = req.body
   const masterId = getMasterId(req)
   try {

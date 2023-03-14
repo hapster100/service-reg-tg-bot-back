@@ -1,6 +1,7 @@
 const express = require('express')
 const { getMasterById, updateMaster } = require('../storage/masters')
 const { getMasterId } = require('../utils')
+const { onlyMaster } = require('./midlwares/onlyMaster')
 
 mastersRouter = express.Router()
 
@@ -14,7 +15,7 @@ mastersRouter.get('/info', async (req, res) => {
   }
 })
 
-mastersRouter.put('/info', async (req, res) => {
+mastersRouter.put('/info', onlyMaster, async (req, res) => {
   const masterId = getMasterId(req)
   const { address, successImageUrl } = req.body
   try {

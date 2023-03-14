@@ -1,6 +1,6 @@
 const express = require('express')
 const crypto = require('crypto')
-const { getMasterId, getInitData } = require('./utils')
+const { getMasterId, getInitData, getAuthDate, getParams } = require('./utils')
 const https = require('https')
 const path = require('path')
 const fs = require('fs')
@@ -21,7 +21,8 @@ const { getImage } = require('./storage/images')
 const validate = (initData, token) => {
   const secret = crypto.createHmac('sha256', 'WebAppData').update(token)
 
-  const params = Object.fromEntries(new URLSearchParams(initData))
+  const params = getParams(initData)
+
   const checkString = Object.keys(params)
     .filter((key) => key !== "hash")
     .map((key) => `${key}=${params[key]}`)
@@ -37,16 +38,18 @@ const validate = (initData, token) => {
 }
 
 const checkValid = async (req, res, next) => {
+  
   if (DEV_MODE) return next()
   if (req.method === 'OPTIONS') return next()
-  
+
   const initData = getInitData(req)
   const masterId = getMasterId(req)
   const master = await getMasterById(masterId)
   
   if (master) {
     const validateResult = validate(initData, master.telegramToken)
-    if (validateResult) return next()
+    const timeDiff = Date.now()/1000 - getAuthDate(req)
+    if (validateResult && timeDiff < 3600) return next()
   }
 
   res.status(403)

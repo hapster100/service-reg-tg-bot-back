@@ -1,6 +1,7 @@
 const express = require('express')
 const { getCategories, addCategory, updateCategory, deleteCategory } = require('../storage/categories')
 const { getMasterId } = require('../utils')
+const { onlyMaster } = require('./midlwares/onlyMaster')
 
 categoriesRouter = express.Router()
 
@@ -11,7 +12,7 @@ categoriesRouter.get('/', async (req, res) => {
   res.send(JSON.stringify({ categories }))
 })
 
-categoriesRouter.post('/', async (req, res) => {
+categoriesRouter.post('/', onlyMaster, async (req, res) => {
   const { category } = req.body
   const masterId = getMasterId(req)
   
@@ -23,7 +24,7 @@ categoriesRouter.post('/', async (req, res) => {
   }
 })
 
-categoriesRouter.put('/:id', async (req, res) => {
+categoriesRouter.put('/:id', onlyMaster, async (req, res) => {
   const { id } = req.params
   const { category } = req.body
 
@@ -40,7 +41,7 @@ categoriesRouter.put('/:id', async (req, res) => {
   }
 })
 
-categoriesRouter.delete('/:id', async (req, res) => {
+categoriesRouter.delete('/:id', onlyMaster, async (req, res) => {
   const { id } = req.params
   try {
     await deleteCategory(id)

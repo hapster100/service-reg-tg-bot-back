@@ -127,6 +127,18 @@ function shedulleSlots(year, month, services, orders, shedulle, duration) {
   return slotsByDay
 }
 
+function getParams(initData) {
+  return Object.fromEntries(new URLSearchParams(initData))
+}
+
+function getAuthDate(req) {
+  return +getParams(getInitData(req)).auth_date
+}
+
+function getUserId(req) {
+  return JSON.parse(getParams(getInitData(req)).user).id
+}
+
 function getMasterId(req) {
   let res = req.header('X-Master-Id') || ''
   return res.replace(/=$/, '')
@@ -180,4 +192,7 @@ module.exports = {
   dateStr,
   phoneStr,
   formatServices,
+  getParams,
+  getAuthDate,
+  getUserId,
 }
