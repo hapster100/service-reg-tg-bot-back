@@ -134,7 +134,9 @@ app.get('/img/:id', async (req, res) => {
     })
     res.end(buff)
   } catch (e) {
-    console.log(e)
+    console.error('IMAGE ERROR')
+    console.error('id:', id)
+    console.error(e)
     res.writeHead(404)
     res.end()
   }

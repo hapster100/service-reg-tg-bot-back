@@ -136,7 +136,8 @@ function getAuthDate(req) {
 }
 
 function getUserId(req) {
-  return JSON.parse(getParams(getInitData(req)).user).id
+  const {user} = getParams(getInitData(req))
+  return JSON.parse(user || '{}').id || 0
 }
 
 function getMasterId(req) {
