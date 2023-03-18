@@ -32,37 +32,40 @@ async function newOrderNotify(order) {
     clientStr
   )
 
-  await tgApi(master.telegramToken).sendMessage(
-    userId,
-    `Вы записаны: ${dateTimeStr}\n` + serviceNames.join('\n')
-  )
-  if (master.successImageUrl) {
-    await tgApi(master.telegramToken).sendPhoto(
+  if (master.userId !== userId) {
+    await tgApi(master.telegramToken).sendMessage(
       userId,
-      '',
-      master.successImageUrl,
+      `Вы записаны: ${dateTimeStr}\n` + serviceNames.join('\n')
     )
-  }
+    if (master.successImageUrl) {
+      await tgApi(master.telegramToken).sendPhoto(
+        userId,
+        '',
+        master.successImageUrl,
+      )
+    }
+    
+    const now = new Date()
+    const byDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1, h, m)
+    const byTwoHour = new Date(date.getFullYear(), date.getMonth(), date.getDate(), h - 2, m)
+    
+    if (now < byDay) {
+      await addNotify(
+        order.id,
+        `Напоминаем, вы записаны:\n${dateTimeStr}\n` + serviceNames.join('\n'),
+        byDay
+      )
+    }
   
-  const now = new Date()
-  const byDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1, h, m)
-  const byTwoHour = new Date(date.getFullYear(), date.getMonth(), date.getDate(), h - 2, m)
-  
-  if (now < byDay) {
-    await addNotify(
-      order.id,
-      `Напоминаем, вы записаны:\n${dateTimeStr}\n` + serviceNames.join('\n'),
-      byDay
-    )
+    if (now < byTwoHour) {
+      await addNotify(
+        order.id,
+        `Напоминаем, вы записаны:\n${dateTimeStr}\n` + serviceNames.join('\n'),
+        byTwoHour,
+      )
+    }
   }
 
-  if (now < byTwoHour) {
-    await addNotify(
-      order.id,
-      `Напоминаем, вы записаны:\n${dateTimeStr}\n` + serviceNames.join('\n'),
-      byTwoHour,
-    )
-  }
 }
 
 module.exports = {

@@ -32,12 +32,14 @@ async function deleteOrderNotify(order) {
     clientStr
   )
 
-  await tgApi(master.telegramToken).sendMessage(
-    userId,
-    `Запись отменена: ${dateTimeStr}\n` + serviceNames.join('\n')
-  )
-
-  await deleteOrderNotifys(order.id)
+  if (master.userId !== userId) {
+    await tgApi(master.telegramToken).sendMessage(
+      userId,
+      `Запись отменена: ${dateTimeStr}\n` + serviceNames.join('\n')
+    )
+  
+    await deleteOrderNotifys(order.id)
+  }
 }
 
 module.exports = {
