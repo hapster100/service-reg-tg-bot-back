@@ -57,25 +57,25 @@ function subIntervals(free, taken) {
   return sub.filter(([s, e]) => s !== e)
 }
 
-function getSlots(free, taken, duration) {
+function getSlots(free, taken, duration, step = STEP) {
   const intervals = subIntervals(free, taken)
   const slots = []
 
   for(let [start, end] of intervals) {
-    if (start%STEP !== 0) {
-      start += STEP
-      start -= start%STEP 
+    if (start%step !== 0) {
+      start += step
+      start -= start%step 
     }
     while(start + duration <= end) {
       slots.push(start)
-      start += STEP
+      start += step
     }
   }
 
   return slots
 }
 
-function shedulleSlots(year, month, services, orders, shedulle, duration) {
+function shedulleSlots(year, month, services, orders, shedulle, duration, step = STEP) {
   const serviceDuration = services.reduce((acc, s) => (acc[s.id] = s.durationMinutes, acc), {})
   const daysInMonth = new Date(Date.UTC(year, month+1, 0)).getDate()
 
@@ -121,7 +121,7 @@ function shedulleSlots(year, month, services, orders, shedulle, duration) {
       taken.push([0, currHour*60 + currMinute])
     }
 
-    slotsByDay[day] = getSlots(free, taken, duration)
+    slotsByDay[day] = getSlots(free, taken, duration, step)
   }
 
   return slotsByDay

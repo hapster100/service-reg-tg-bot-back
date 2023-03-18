@@ -14,6 +14,7 @@ const { shedulleSlots, getMasterId } = require('../utils')
 
 const { newOrderNotify } = require('../telegram/newOrderNotify')
 const { deleteOrderNotify } = require('../telegram/deleteOrderNotify')
+const { getMasterById } = require('../storage/masters')
 
 ordersRouter = express.Router()
 
@@ -95,6 +96,7 @@ ordersRouter.post('/slots', async (req, res) => {
   const { year, month, duration, orderId = '' } = req.body
   const masterId = getMasterId(req)
   
+  const master = await getMasterById(masterId)
   const orders = (await getMonthOrders(year, month, masterId))
     .filter(ord => ord.id !== orderId)
   const shedulle = await getMonthShedulle(year, month, masterId)
@@ -103,7 +105,8 @@ ordersRouter.post('/slots', async (req, res) => {
 
   res.send(JSON.stringify(shedulleSlots(
     year, month, services,
-    orders, shedulle, duration
+    orders, shedulle, duration,
+    master.shedulleStep
   )))
 })
 

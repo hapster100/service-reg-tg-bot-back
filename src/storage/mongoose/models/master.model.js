@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose')
+const { STEP } = require('../../../config')
 
 const MasterSchema = new Schema({
   _id: {
@@ -25,7 +26,11 @@ const MasterSchema = new Schema({
   successImageUrl: {
     type: String,
     default: ''
-  } 
+  },
+  shedulleStep: {
+    type: Number,
+    default: STEP
+  }
 })
 
 MasterSchema.set('toObject', {
