@@ -14,6 +14,7 @@ const { usersRouter } = require('./routes/users')
 const { statisticRouter } = require('./routes/stat')
 
 const { USE_HTTPS, SERVER_PORT, DEV_MODE } = require('./config')
+console.log(require('./config'))
 const { getMasterById } = require('./storage/masters')
 const { notify } = require('./telegram')
 const { getImage } = require('./storage/images')
