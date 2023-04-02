@@ -81,6 +81,10 @@ async function deleteOrder(orderId) {
   return updateOrder(orderId, { deleted: true })
 }
 
+async function getMasterOrders(masterId) {
+  return await getFromCollectionWhere('orders', ['masterId', '==', masterId])
+}
+
 module.exports = {
   addOrder,
   updateOrder,
@@ -90,4 +94,5 @@ module.exports = {
   getUserOrders,
   getOrderById,
   getStatisticOrders,
+  getMasterOrders,
 }
