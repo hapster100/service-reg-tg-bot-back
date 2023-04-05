@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --no-warnings src/index.js"
+    "start": "node --no-warnings src/index.js",
+    "dev": "DEV=1 node src/index.js"
   },
   "author": "",
   "license": "ISC",
