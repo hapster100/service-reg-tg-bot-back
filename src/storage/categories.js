@@ -2,12 +2,18 @@ const {
   addToCollection,
   getFromCollectionWhere,
   updateInCollection,
-  deleteFromCollection
 } = require('./mongoose')
 const { deleteService, getServicesByCategoryId } = require('./services')
 
+function filterDeleted(category) {
+  return !category.deleted
+}
+
 async function getCategories(masterId) {
-  return await getFromCollectionWhere('categories', ['masterId', '==', masterId])
+  const categories = await getFromCollectionWhere('categories',
+    ['masterId', '==', masterId]
+  )
+  return categories.filter(filterDeleted)
 }
 
 async function addCategory(category) {
@@ -23,7 +29,9 @@ async function deleteCategory(id) {
   for(const service of services) {
     await deleteService(service.id)
   }
-  return await deleteFromCollection('categories', id)
+  return await updateCategory(id, {
+    deleted: true,
+  })
 }
 
 module.exports = {

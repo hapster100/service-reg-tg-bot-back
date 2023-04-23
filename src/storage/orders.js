@@ -78,7 +78,9 @@ async function getOrderById(orderId) {
 }
 
 async function deleteOrder(orderId) {
-  return updateOrder(orderId, { deleted: true })
+  return await updateOrder(orderId, {
+    deleted: true
+  })
 }
 
 async function getMasterOrders(masterId) {

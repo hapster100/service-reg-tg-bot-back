@@ -1,7 +1,18 @@
-const { getById, addToCollection, getFromCollectionWhere, deleteFromCollection, updateInCollection } = require('./mongoose')
+const {
+  getById, addToCollection,
+  getFromCollectionWhere, updateInCollection
+} = require('./mongoose')
 const { replaceImage } = require('./images')
+
+function filterDeleted(service) {
+  return !service.deleted
+}
+
 async function getServices(masterId) {
-  return await getFromCollectionWhere('services', ['masterId', '==', masterId])
+  const services = await getFromCollectionWhere('services',
+    ['masterId', '==', masterId]
+  )
+  return services.filter(filterDeleted)
 }
 
 async function getService(id) {
@@ -11,11 +22,13 @@ async function getService(id) {
 async function deleteService(id) {
   const service = await getService(id)
   await replaceImage(service.imageUrl, '')
-  return await deleteFromCollection('services', id)
+  return await updateService(id, {
+    deleted: true,
+    imageUrl: '',
+  })
 }
 
 async function addService(service) {
-  const { imageUrl } = service
   service.imageUrl = await replaceImage('', service.imageUrl)
   return await addToCollection('services', service)
 }
@@ -27,7 +40,10 @@ async function updateService(id, service) {
 }
 
 async function getServicesByCategoryId(categoryId) {
-  return await getFromCollectionWhere('services', ['categoryId', '==', categoryId])
+  const services = await getFromCollectionWhere('services',
+    ['categoryId', '==', categoryId]
+  );
+  return services.filter(filterDeleted)
 }
 
 module.exports = {
